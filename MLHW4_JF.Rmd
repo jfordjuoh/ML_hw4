@@ -92,8 +92,8 @@ class4_test <- class4[-train.index,]
 ```
 
 
-## Part I: Implementing a Simple Prediction Pipeline
-#Question 1 and 2
+# PART I: IMPLEMENTING A SIMPLE PREDICTION PIPELINE
+## Question 1 and 2
 ```{r}
 #Q1 Task: Fit two prediction  models using different subsets of the features in the training data. Features can overlap in the two models, but the feature sets should not be exactly the same across models. Clearly state which features were used in the two models.
 
@@ -129,18 +129,17 @@ My second model includes these three variables plus poverty group (is your house
 
 Since the Mean Square Error (RMSE) is a standard way to measure the error in our model, the larger the number the larger the error. I would recommend the second model which included 5 variables as the preferred prediction model because it had a slightly lower RMSE. 
 
-#Question 3
+## Question 3
 ```{r}
 #Q3 Task: Describe one setting (in 1 or 2 sentences) where the implementation of your final model would be useful.
-
-#My final model may be useful in a low-income community where there may be lack of access to 
-
 ```
+Q3 Answer: My final model may be useful in a low-income community where there may be high prevalence of chronic diseases and researchers would like to understand how predictors like poverty or physical activity levels impact an individuals typical amount of healthy days.
 
-## Part II: Conducting an Unsupervised Analysis
+
+# PART II: CONDUCTING AN UNSUPERVISED ANALYSIS 
 Using the dataset from the Group assignment Part 3 (USArrests), identify clusters using hierarchical analysis. Use an agglomerative algorithm for hierarchical clustering. Use a Euclidian distance measure to construct your dissimilarity matrix.
 
-#Question 4
+## Question 4
 ```{r, echo = FALSE, results='hide'}
 # FIRST WAY I DID IT BEFORE THE ALTERNATIVE WAY
 #Q4 Task: Conduct a hierarchical clustering analysis. Be sure to specify the linkage method used. Within your analysis, make sure you do both of the following:
@@ -203,8 +202,8 @@ In cluster two, the average murder (murder arrests per 100,000) was 8.21, the av
 
 In cluster three, the average murder (murder arrests per 100,000) was 4.27, the average assault (assault arrests per 100,000) was 87.6, the percent urban population was 59.8, and the average rape arrests (rape arrests per 100,000) was 14.4. 
 
-
+## Question 5
 ```{r}
-#Question 5: Pretend that the data are from 2020 and not 1973. Describe one research question that can be addressed using the newly identified clusters. Briefly comment on any scientific or ethical considerations one should review before using these clusters for your specific question. NOTE: The clusters can be used as an exposure, an outcome or a covariate.
+#Question 5 Task: Pretend that the data are from 2020 and not 1973. Describe one research question that can be addressed using the newly identified clusters. Briefly comment on any scientific or ethical considerations one should review before using these clusters for your specific question. NOTE: The clusters can be used as an exposure, an outcome or a covariate.
 ```
-
+Q5 Answer: Is there a relationship between number of COVID-19 deaths (outcome) and the percent of urban population within the clusters? One onsideration is that within the same cluster, some states may have a higher urban population percentage compared to others, which can bias the results of the analysis. For instance, New York and Alabama are in the same cluster but the two states have a big difference in their urban populations. Also the researchers may want to consider the differences in the access to care/affordability of care in the clusters, as this would be related to whether or not an individual may have received appropriate COVID treatment prior to death. 
