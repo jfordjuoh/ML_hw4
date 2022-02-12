@@ -131,9 +131,9 @@ Since the Mean Square Error (RMSE) is a standard way to measure the error in our
 
 #Question 3
 ```{r}
-#Q3 Task: Describe one setting (in 1-2 sentences) where the implementation of your final model would be useful.
+#Q3 Task: Describe one setting (in 1 or 2 sentences) where the implementation of your final model would be useful.
 
-My final model may be useful in a low-income community where there may be lack of access to 
+#My final model may be useful in a low-income community where there may be lack of access to 
 
 ```
 
@@ -141,45 +141,68 @@ My final model may be useful in a low-income community where there may be lack o
 Using the dataset from the Group assignment Part 3 (USArrests), identify clusters using hierarchical analysis. Use an agglomerative algorithm for hierarchical clustering. Use a Euclidian distance measure to construct your dissimilarity matrix.
 
 #Question 4
-```{r}
+```{r, echo = FALSE, results='hide'}
+# FIRST WAY I DID IT BEFORE THE ALTERNATIVE WAY
 #Q4 Task: Conduct a hierarchical clustering analysis. Be sure to specify the linkage method used. Within your analysis, make sure you do both of the following:
 #  1. Determine the optimal number of clusters using a clear, data-driven strategy.
 #  2. Describe the composition of each cluster in terms of the original input features
 
-data(USArrests)
-#Check means and SDs to determine if scaling is necessary
-colMeans(USArrests, na.rm = TRUE)
-apply(USArrests, 2, sd, na.rm = TRUE)
+#data(USArrests)
 
 # NTS: First I need to create Dissimilarity matrix
-diss_matrix <- dist(USArrests, method = "euclidean")
+#diss_matrix <- dist(USArrests, method = "euclidean")
 
 #NTS: Then hierarchical clustering using Complete Linkage
-clusters_h <- hclust(diss_matrix, method = "complete" )
+#clusters_h <- hclust(diss_matrix, method = "complete" )
 
 # Plot the obtained dendrogram
-plot(clusters_h, cex = 0.4, hang = -1)
+#plot(clusters_h, cex = 0.4, hang = -1)
 
 #NTS: Now I need to choose where to cut across my dendrogram to choose my number of clusters. In order to do that I have to  creating a function to use within clusGap. I am now using an average linkage. After running the function, I will plot the gapstat to visualize it
 
-hclusCut <- function(x, k) list(cluster = cutree(hclust(dist(x, method = "euclidian"), method ="average"), k = k))
+#hclusCut <- function(x, k) list(cluster = cutree(hclust(dist(x, method = "euclidian"), method = "average"), k = k))
 
-gap_stat <- clusGap(USArrests, FUN = hclusCut, K.max = 10, B = 50)
-fviz_gap_stat(gap_stat)
+#gap_stat <- clusGap(USArrests, FUN = hclusCut, K.max = 10, B = 50)
+#fviz_gap_stat(gap_stat)
 
 #NTS: Now, use the number of clusters from gap statistic to obtain cluster assignment for each observation
-clusters_h3 <- cutree(clusters_h, k = 3)
-table(clusters_h3)
+#clusters_h3 <- cutree(clusters_h, k = 3)
+#table(clusters_h3)
 
 #Now I want to take those values and put it back onto my original dataset
-input_feature_values <- cbind(USArrests,cluster = clusters_h$cluster) 
+```
 
-input_feature_values %>%
+
+```{r}
+#Question IV Task: Conduct a hierarchical clustering analysis. Be sure to specify the linkage method used. Within your analysis, make sure you do both of the following:
+#  1 Determine the optimal number of clusters using a clear, data-driven strategy.
+#  2 Describe the composition of each cluster in terms of the original input features
+
+
+
+#Alternatives for hierarchical clustering
+
+clusters_hcut <- hcut(USArrests, k = 3, hc_func = "hclust", hc_method = "complete", hc_metric = "euclidian")
+
+clusters_hcut$size
+fviz_dend(clusters_hcut, rect = TRUE)
+fviz_cluster(clusters_hcut)
+
+gap_stat <- clusGap(clusters_hcut, FUN = hcut, hc_method = "average", K.max = 10, B = 5)
+fviz_gap_stat(gap_stat)
+
+input.feature.vals <- cbind(USArrests,cluster = clusters_hcut$cluster)
+
+input.feature.vals %>%
   group_by(cluster) %>%
   summarise_all(mean)
-
 ```
-Q4 Answers: I used Euclidean as my distance metric and complete linkage so that I can use the distance between all of the different data points. After visualizing the gapstat, the optimal number of clusters was 3. 
+Q4 Answers: I used Euclidean as my distance metric and complete linkage so that I can use the distance between all of the different data points. After visualizing the gapstat, the optimal number of clusters was 3. In the first cluster there were 16 states, 14 states in the second cluster, and 20 states in the third cluster. In cluster one, the average murder (murder arrests per 100,000) was 11.8, the average assault (assault arrests per 100,000) was 273, the percent urban population was 68.3, and the average rape arrests (rape arrests per 100,000) was 28.4. 
+
+In cluster two, the average murder (murder arrests per 100,000) was 8.21, the average assault (assault arrests per 100,000) was 173, the percent urban population was 70.6, and the average rape arrests (rape arrests per 100,000) was 22.8. 
+
+In cluster three, the average murder (murder arrests per 100,000) was 4.27, the average assault (assault arrests per 100,000) was 87.6, the percent urban population was 59.8, and the average rape arrests (rape arrests per 100,000) was 14.4. 
+
 
 ```{r}
 #Question 5: Pretend that the data are from 2020 and not 1973. Describe one research question that can be addressed using the newly identified clusters. Briefly comment on any scientific or ethical considerations one should review before using these clusters for your specific question. NOTE: The clusters can be used as an exposure, an outcome or a covariate.
