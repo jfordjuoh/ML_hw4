@@ -9,24 +9,13 @@ library(tidyverse)
 library(Amelia)
 library(caret)
 library(stats)
+library(cluster)
+library(factoextra)
 library(dplyr)
 library(readxl)
 library(haven)
 library(knitr)
 library(broom)
-library(ggplot2)
-knitr::opts_chunk$set(
-  fig.width = 6,
-  fig.asp = .9,
-  out.width = "90%"
-)
-theme_set(theme_minimal() + theme(legend.position = "bottom"))
-options(
-  ggplot2.continuous.colour = "viridis",
-  ggplot2.continuous.fill = "viridis"
-)
-scale_colour_discrete = scale_color_viridis_d
-scale_fill_discrete = scale_fill_viridis_d
 ```
 
 
@@ -104,11 +93,11 @@ class4_test <- class4[-train.index,]
 
 
 ## Part I: Implementing a Simple Prediction Pipeline
-#Question 1
+#Question 1 and 2
 ```{r}
-#Q1: Fit two prediction  models using different subsets of the features in the training data. Features can overlap in the two models, but the feature sets should not be exactly the same across models. Clearly state which features were used in the two models.
+#Q1 Task: Fit two prediction  models using different subsets of the features in the training data. Features can overlap in the two models, but the feature sets should not be exactly the same across models. Clearly state which features were used in the two models.
 
-#Q2: Apply both models within the test data and determine which model is the preferred prediction model using the appropriate evaluation metric(s).
+#Q2 Task: Apply both models within the test data and determine which model is the preferred prediction model using the appropriate evaluation metric(s).
 
 #NTS: If this was a logistic regression I would use a confusion matrix but since this is a linear regression I am using postResample.
 
@@ -140,8 +129,9 @@ My second model includes these three variables plus poverty group (is your house
 
 Since the Mean Square Error (RMSE) is a standard way to measure the error in our model, the larger the number the larger the error. I would recommend the second model which included 5 variables as the preferred prediction model because it had a slightly lower RMSE. 
 
+#Question 3
 ```{r}
-#Q3: Describe one setting (in 1-2 sentences) where the implementation of your final model would be useful.
+#Q3 Task: Describe one setting (in 1-2 sentences) where the implementation of your final model would be useful.
 
 My final model may be useful in a low-income community where there may be lack of access to 
 
@@ -150,12 +140,46 @@ My final model may be useful in a low-income community where there may be lack o
 ## Part II: Conducting an Unsupervised Analysis
 Using the dataset from the Group assignment Part 3 (USArrests), identify clusters using hierarchical analysis. Use an agglomerative algorithm for hierarchical clustering. Use a Euclidian distance measure to construct your dissimilarity matrix.
 
+#Question 4
 ```{r}
-#Question 4: Conduct a hierarchical clustering analysis. Be sure to specify the linkage method used. Within your analysis, make sure you do both of the following:
+#Q4 Task: Conduct a hierarchical clustering analysis. Be sure to specify the linkage method used. Within your analysis, make sure you do both of the following:
 #  1. Determine the optimal number of clusters using a clear, data-driven strategy.
 #  2. Describe the composition of each cluster in terms of the original input features
-```
 
+data(USArrests)
+#Check means and SDs to determine if scaling is necessary
+colMeans(USArrests, na.rm = TRUE)
+apply(USArrests, 2, sd, na.rm = TRUE)
+
+# NTS: First I need to create Dissimilarity matrix
+diss_matrix <- dist(USArrests, method = "euclidean")
+
+#NTS: Then hierarchical clustering using Complete Linkage
+clusters_h <- hclust(diss_matrix, method = "complete" )
+
+# Plot the obtained dendrogram
+plot(clusters_h, cex = 0.4, hang = -1)
+
+#NTS: Now I need to choose where to cut across my dendrogram to choose my number of clusters. In order to do that I have to  creating a function to use within clusGap. I am now using an average linkage. After running the function, I will plot the gapstat to visualize it
+
+hclusCut <- function(x, k) list(cluster = cutree(hclust(dist(x, method = "euclidian"), method ="average"), k = k))
+
+gap_stat <- clusGap(USArrests, FUN = hclusCut, K.max = 10, B = 50)
+fviz_gap_stat(gap_stat)
+
+#NTS: Now, use the number of clusters from gap statistic to obtain cluster assignment for each observation
+clusters_h3 <- cutree(clusters_h, k = 3)
+table(clusters_h3)
+
+#Now I want to take those values and put it back onto my original dataset
+input_feature_values <- cbind(USArrests,cluster = clusters_h$cluster) 
+
+input_feature_values %>%
+  group_by(cluster) %>%
+  summarise_all(mean)
+
+```
+Q4 Answers: I used Euclidean as my distance metric and complete linkage so that I can use the distance between all of the different data points. After visualizing the gapstat, the optimal number of clusters was 3. 
 
 ```{r}
 #Question 5: Pretend that the data are from 2020 and not 1973. Describe one research question that can be addressed using the newly identified clusters. Briefly comment on any scientific or ethical considerations one should review before using these clusters for your specific question. NOTE: The clusters can be used as an exposure, an outcome or a covariate.
