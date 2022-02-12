@@ -1,0 +1,76 @@
+---
+title: "MLHW4_JF"
+date: February 11, 2022
+output: word_document
+---
+
+```{r, echo = FALSE}
+library(tidyverse)
+library(caret)
+library(dplyr)
+library(readxl)
+library(haven)
+library(knitr)
+library(broom)
+library(ggplot2)
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .9,
+  out.width = "90%"
+)
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+scale_colour_discrete = scale_color_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+```
+
+The aim of the models are to predict the number of days in a month an individual reported having good physical health (feature name: healthydays). 
+
+```{r}
+# Perform basic data cleaning. Note which features are continuous, which are categorical and ensure they are being stored that way in your R dataset (That is, if categorical variables have been read-in as continuous variables, convert them to factors)
+
+class4 = read_csv("class4_p1.csv") %>%
+    janitor::clean_names() %>%
+    rename(observation = x1) %>% #all the variables are cont so we have to convert them all to factors/provide levels except for healthy days (outcome) because we are doing a linear reg 
+    mutate(chronic1 = as.factor(chronic1),
+           chronic3 = as.factor(chronic3),
+           chronic4 = as.factor(chronic4),
+           tobacco1 = as.factor(tobacco1), 
+           alcohol1 = as.factor(alcohol1),
+           gpaq8totmin = as.factor(gpaq8totmin),
+           gpaq11days = as.factor(gpaq11days),
+           habits5 = as.factor(habits5), 
+           habits7 = as.factor(habits7),
+           agegroup = as.factor(agegroup),
+           dem3 = as.factor(dem3),
+           dem4 = as.factor(dem4),
+           dem8 = as.factor(dem8),
+           povertygroup = as.factor(povertygroup)
+           ) %>% #does gpaq8totmin and gpaq11days have to be a factor
+      drop_na()  #dropping all the missing data
+
+summary(class4)
+
+# Partition data into training and testing (use a 70/30 split)  
+
+
+```
+
+
+## Part I: Implementing a Simple Prediction Pipeline
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+#Question 1
+```{r}
+Q1: Fit two prediction  models using  different subsets of the features in the training data. Features can overlap in the two models, but the feature sets should not be exactly the same across models. Clearly state which features were used in the two models.
+```
+
+## Part II: Conducting an Unsupervised Analysis
+You can also embed plots, for example:
+
