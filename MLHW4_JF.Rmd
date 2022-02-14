@@ -18,13 +18,6 @@ library(knitr)
 library(broom)
 ```
 
-
-Q's for sneha:
-Qoes gpaq8totmin and gpaq11days have to be a factor? based on the question asked, I believe this is a continuous variable.
-
-For q4 when I run the code in R, I'm getting one for the optimal number of clusters. When I knit it I'm getting 3 as the optimal number of clusters. 
-For q4, if I do it one way the optimal number of clusters as 3. If i do it the other way I get the optimal number of clusters as 1. What should I do? also how do I use cbind in the first way ?
-
 # Part I Setup: Data Cleaning, Iniital Linear Regression, and Data Partitioning,   
 ```{r}
 # First Task: Perform basic data cleaning. Note which features are continuous, which are categorical and ensure they are being stored that way in your R dataset (That is, if categorical variables have been read-in as continuous variables, convert them to factors)
@@ -146,9 +139,12 @@ Using the dataset from the Group assignment Part 3 (USArrests), identify cluster
 #  1 Determine the optimal number of clusters using a clear, data-driven strategy.
 #  2 Describe the composition of each cluster in terms of the original input features
 
-
 #Alternatives for hierarchical clustering
 data(USArrests)
+
+#Determining if scaling is necessary. Since murder is really low, I'll scale the data
+colMeans(USArrests, na.rm=TRUE)
+apply(USArrests, 2, sd, na.rm=TRUE)
 
 clusters_hcut <- hcut(USArrests, k = 3, hc_func = "hclust", hc_method = "complete", hc_metric = "euclidian")
 
