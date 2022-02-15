@@ -18,7 +18,7 @@ library(knitr)
 library(broom)
 ```
 
-# Part I Setup: Data Cleaning, Iniital Linear Regression, and Data Partitioning,   
+# Part I Setup: Data Cleaning, Inital Linear Regression, and Data Partitioning,   
 ```{r}
 # First Task: Perform basic data cleaning. Note which features are continuous, which are categorical and ensure they are being stored that way in your R dataset (That is, if categorical variables have been read-in as continuous variables, convert them to factors)
 
@@ -106,7 +106,7 @@ model1_pred <- predict(model1_again, class4_test)
 
 model1_again
 
-postResample(pred = model1_pred, obs = class4_test$healthydays)
+postResample(pred = model1_pred, obs = class4_test$healthydays) %>% knitr::kable()
 
 
 model2_again <- train(healthydays ~ gpaq8totmin + gpaq11days + bmi + povertygroup + agegroup, data = class4, method = "glm", family = "gaussian", trControl = control.settings)
@@ -115,13 +115,13 @@ model2_pred <- predict(model2_again, class4_test)
 
 model2_again
 
-postResample(pred = model2_pred, obs = class4_test$healthydays)
+postResample(pred = model2_pred, obs = class4_test$healthydays) %>% knitr::kable()
 ```
 My first model includes 3 variables: BMI, gpaq8totmin(minutes of total physical activity on home chores on an average day) and gpaq11days (during the last 7 days, on how many days did you walk to get to and from places?). The root mean square error was 7.654. After running the postResample, my RSME became 7.800.
 
 My second model includes these three variables plus poverty group (is your household’s annual income from all source: 1 = <100%, 2 = 100-199%, 3 = 200-399%, 4 = 400-599%, 5 = 600%, 6 = Don’t know) and agegroup (group 1 = 18-24, group 2 = 25-44, group 3 = 45-64, and group 4 = 65+). The root mean square error was 7.444. After running the postResample, my RSME became 7.502.
 
-Since the Mean Square Error (RMSE) is a standard way to measure the error in our model, the larger the number the larger the error. I would recommend the second model which included 5 variables as the preferred final prediction model because it had a slightly lower RMSE. 
+Since the Mean Square Error (RMSE) is a standard way to measure the error in our model, the larger the , the larger the error. I would recommend the second model which included 5 variables as the preferred final prediction model because it had a slightly lower RMSE and a larger R-squared. 
 
 ## Question 3
 ```{r}
@@ -159,7 +159,7 @@ input.feature.vals <- cbind(USArrests,cluster = clusters_hcut$cluster)
 
 input.feature.vals %>%
   group_by(cluster) %>%
-  summarise_all(mean)
+  summarise_all(mean) %>% knitr::kable()
 
 ```
 Q4 Answers: I used Euclidean as my distance metric and complete linkage so that I can use the distance between all of the different data points. After visualizing the gapstat, the optimal number of clusters was 3. In the first cluster there were 16 states, 14 states in the second cluster, and 20 states in the third cluster. In cluster one, the average murder (murder arrests per 100,000) was 11.8, the average assault (assault arrests per 100,000) was 273, the percent urban population was 68.3, and the average rape arrests (rape arrests per 100,000) was 28.4. 
@@ -168,8 +168,10 @@ In cluster two, the average murder (murder arrests per 100,000) was 8.21, the av
 
 In cluster three, the average murder (murder arrests per 100,000) was 4.27, the average assault (assault arrests per 100,000) was 87.6, the percent urban population was 59.8, and the average rape arrests (rape arrests per 100,000) was 14.4. 
 
+Something very is interesting how cluster one had the largest average of murder, assault, and rape arrests but the largest average percent of urban population was in cluster two. 
+
 ## Question 5
 ```{r}
 #Question 5 Task: Pretend that the data are from 2020 and not 1973. Describe one research question that can be addressed using the newly identified clusters. Briefly comment on any scientific or ethical considerations one should review before using these clusters for your specific question. NOTE: The clusters can be used as an exposure, an outcome or a covariate.
 ```
-Q5 Answer: Is there a relationship between number of COVID-19 deaths (outcome) and the percent of urban population within the clusters? One onsideration is that within the same cluster, some states may have a higher urban population percentage compared to others, which can bias the results of the analysis. For instance, New York and Alabama are in the same cluster but the two states have a big difference in their urban populations. Also the researchers may want to consider the differences in the access to care/affordability of care in the clusters, as this would be related to whether or not an individual may have received appropriate COVID treatment prior to death. 
+Q5 Answer: Is there a relationship between number of COVID-19 deaths (outcome) and the percent of urban population within the clusters? One consideration is that within the same cluster, some states may have a higher urban population percentage compared to others, which can bias the results of the analysis. For instance, New York and Alabama are in the same cluster but the two states have a big difference in their urban populations. Also the researchers may want to consider the differences in the access to care/affordability of care in the clusters, as this would be related to whether or not an individual may have received appropriate COVID treatment prior to death. 
